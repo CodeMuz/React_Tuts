@@ -13,7 +13,8 @@ function Square(props) {
 class Board extends React.Component {
 
     renderSquare(i) {
-        return <Square key={i}
+        return <Square
+            key={i}
             value={this.props.squares[i]}
             onClick={() => this.props.onClick(i)}
         />;
@@ -24,13 +25,13 @@ class Board extends React.Component {
         return (
             <div>
                 {
-                    [...Array(3).keys()].map ( (n) => {
+                    [0, 1, 2].map((n) => {
                         return (
                             <div key={n} className="board-row">
                                 {
-                                    [...Array(3).keys()].map ( (z) => {
+                                    [0, 1, 2].map((z) => {
                                         return (
-                                            this.renderSquare(n + (z*3))
+                                            this.renderSquare(n + (z * 3))
                                         )
                                     })
                                 }
@@ -49,7 +50,7 @@ class Game extends React.Component {
         this.state = {
             history: [{
                 squares: Array(9).fill(null),
-                coord:{}
+                coord: {}
             }],
             stepNumber: 0,
             xIsNext: true,
@@ -62,7 +63,7 @@ class Game extends React.Component {
         const squares = current.squares.slice();
         const coord = {
             x: i % 3,
-            y: Math.floor(i /3)
+            y: Math.floor(i / 3)
         };
         if (calculateWinner(squares) || squares[i]) {
             return;
@@ -85,6 +86,17 @@ class Game extends React.Component {
         });
     }
 
+    reorderMoves(){
+        const oldHistory = this.state.history;
+        let newHistory = [];
+        for (let i = 0;i < oldHistory.length;i++){
+            newHistory[i] = oldHistory[oldHistory.length - 1 - i];
+        }
+        this.setState({
+            history: newHistory
+        });
+    }
+
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
@@ -92,7 +104,7 @@ class Game extends React.Component {
 
         const moves = history.map((step, move) => {
             const desc = move ?
-                `Go to move (${step.coord.x},${step.coord.y})`:
+                `Go to move (${step.coord.x},${step.coord.y})` :
                 'Go to game start';
             const listClass = (this.state.stepNumber === move) ? 'current' : '';
             return (
@@ -121,6 +133,9 @@ class Game extends React.Component {
                     <div>{status}</div>
                     <ol>{moves}</ol>
                 </div>
+                <button onClick={(i) => this.reorderMoves(i)}>
+                    Sort Moves
+                </button>
             </div>
         );
     }
