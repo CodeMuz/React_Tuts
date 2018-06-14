@@ -119,11 +119,7 @@ class Game extends React.Component {
         if (winner) {
             status = 'Winner: ' + winner.winner;
         } else {
-            if(history.length === 10){
-                status = 'Draw';
-            } else {
-                status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-            }
+            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
         return (
@@ -155,16 +151,34 @@ ReactDOM.render(
 );
 
 function calculateWinner(squares) {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
+
+    let cols = 3;
+    let lines = [];
+
+    for(let j = 0;j < cols; j++) {
+        row = [];
+        for (let i = 0; i < cols; i++) {
+            row.push(i + (j * cols));
+        }
+        lines.push(row);
+    }
+    for(let j = 0;j < cols; j++) {
+        row = [];
+        for (let i = 0; i < cols; i++) {
+            row.push(j + (i * cols));
+        }
+        lines.push(row);
+    }
+
+    for(let j = 0;j < cols; j++) {
+        let dia = [];
+        let dia2 = [];
+        dia.push(lines[j][j]);
+        dia2.push(lines[j][cols - 1 - j]);
+    }
+    lines.push(dia);
+    lines.push(dia2);
+
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
